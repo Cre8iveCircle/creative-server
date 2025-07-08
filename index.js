@@ -8,7 +8,7 @@ const cors = require('cors')
 require('dotenv').config();
 
 // mongoose dv sever
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGO_URI_LOCAL)
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.error('MongoDB connection error:', err));
 // connect to server
@@ -18,7 +18,7 @@ app.use(express.json())
 app.use(cors())
 
 // gain access to my routes
-app.use('/auth', require('./routes/auth'))
+app.use('/api/payment', require('./routes/payment'));
 
 app.listen(port, (error) => {
     if (!error) {
