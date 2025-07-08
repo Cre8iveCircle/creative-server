@@ -55,7 +55,7 @@ const sendTicketEmail = async (email, fullname, ticketPath) => {
             NOTE: PRESENT THIS TICKET AT THE REGISTRATION STAND – IT IS REQUIRED FOR ENTRY.
           </p>
           <img src="cid:eventTicket" style="max-width: 100%; margin: 12px 0; border-radius: 8px;" />
-          <p>📥 <a href="https://your-domain.com/assets/spark.png" download>Click here to download your ticket</a></p>
+          <p>📥 <a href="https://creative-circle-01.netlify.app/assets/spark-Cs0fKAt6.svg" download>Click here to download your ticket</a></p>
           <br/>
           <p>We look forward to welcoming you to an unforgettable event!</p>
           <br/>
