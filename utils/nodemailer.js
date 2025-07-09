@@ -43,10 +43,10 @@ const sendConfirmationEmail = async (email, fullname) => {
 const sendTicketEmail = async (email, fullname, ticketPath, ticket_bought) => {
   try {
     const ticketDownloadMap = {
-      '₦100': 'spark-Ch-2AXgq',
-      '₦150': 'vip-C7OYCUfe',
-      '₦200': 'tech-CjMOAfLq',
-      '₦250': 'digital-CHjk1TT6',
+      '₦3,500': 'spark-Ch-2AXgq',
+      '₦10,000': 'vip-C7OYCUfe',
+      '₦50,000': 'tech-CjMOAfLq',
+      '₦100,000': 'digital-CHjk1TT6',
     };
 
     console.log('🧾 Final ticketPath:', ticketPath);
