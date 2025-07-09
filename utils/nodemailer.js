@@ -1,5 +1,7 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
+const path = require('path');
+
 
 const transport = nodemailer.createTransport({
   service: "gmail",
@@ -34,16 +36,29 @@ const sendConfirmationEmail = async (email, fullname) => {
     console.error("Error sending confirmation email:", error);
   }
 };
-
-const sendTicketEmail = async (email, fullname, ticketPath) => {
+const sendTicketEmail = async (email, fullname, ticketPath, ticket_bought) => {
   try {
+    const ticketDownloadMap = {
+      '₦100': 'spark-Ch-2AXgq',
+      '₦150': 'vip-C7OYCUfe',
+      '₦200': 'tech-CjMOAfLq',
+      '₦250': 'digital-CHjk1TT6',
+    };
+
+    const fileName = path.basename(ticketPath); // e.g., spark.png
+    const fileBase = ticketDownloadMap[ticket_bought] || 'default-ticket';
+    const downloadLink = `https://creative-circle-01.netlify.app/assets/${fileBase}.png`;
+
     await transport.sendMail({
       from: `"CRE8IVE SUMMIT" <${process.env.MAIL_USER}>`,
       to: email,
-      subject: "IMPORTANT INFORMATION | GET YOUR TICKET",
+      subject: "IMPORTANT INFORMATION | GET YOUR TICKET",
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-          <h2 style="color: #FFBB00;">Important Information</h2>
+          <h2 style="color: #FFBB00;">Hello ${fullname},</h2>
+          <p>Thank you for registering for <strong>CRE8IVE SUMMIT ONE.0</strong>!</p>
+          <p>Your ticket package: <strong>${ticket_bought}</strong></p>
+          
           <ul>
             <li><strong>REGISTRATION starts at 8:30 AM</strong> – please arrive early to secure your spot.</li>
             <li><strong>VENUE:</strong> Denco Cinema, Debow Junction, Ekpoma.</li>
@@ -51,12 +66,15 @@ const sendTicketEmail = async (email, fullname, ticketPath) => {
             <li><strong>Be ready to network</strong> – come prepared to meet new people and share ideas.</li>
             <li><strong>Maximize the experience</strong> – engage actively, ask questions, and soak in the knowledge.</li>
           </ul>
+
           <p style="color: red; font-weight: bold;">
             NOTE: PRESENT THIS TICKET AT THE REGISTRATION STAND – IT IS REQUIRED FOR ENTRY.
           </p>
-          <img src="cid:eventTicket" style="max-width: 100%; margin: 12px 0; border-radius: 8px;" />
-          <p>📥 <a href="https://creative-circle-01.netlify.app/assets/spark-Cs0fKAt6.svg" download>Click here to download your ticket</a></p>
-          <br/>
+
+          <img src="cid:eventTicket" style="max-width: 100%; margin: 12px 0; border-radius: 8px;" alt="Ticket" />
+
+          <p>📥 <a href="${downloadLink}" download>Click here to download your ticket</a></p>
+
           <p>We look forward to welcoming you to an unforgettable event!</p>
           <br/>
           <p><strong>CRE8IVE SUMMIT ONE.0<br/>Registration Team</strong></p>
@@ -64,17 +82,19 @@ const sendTicketEmail = async (email, fullname, ticketPath) => {
       `,
       attachments: [
         {
-          filename: 'spark.png',
-          path: ticketPath, // e.g., './assets/spark.png'
+          filename: fileName,
+          path: ticketPath,
           cid: 'eventTicket',
         }
       ]
     });
-    console.log("Ticket email sent.");
+
+    console.log("✅ Ticket email sent to:", email);
   } catch (error) {
-    console.error("Error sending ticket email:", error);
+    console.error("❌ Error sending ticket email:", error);
   }
 };
+
 
 module.exports = {
   sendConfirmationEmail,

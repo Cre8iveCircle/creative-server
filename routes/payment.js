@@ -5,11 +5,30 @@ require('dotenv').config();
 const Payment = require('../model/payment'); // Ensure this is correctly imported
 const { sendConfirmationEmail, sendTicketEmail } = require('../utils/nodemailer');
 
+const path = require('path');
+
+// Ticket image map
+const ticketImages = {
+  '₦100': './assets/spark.png',
+  '₦150': './assets/vip.png',
+  '₦200': './assets/tech.png',
+  '₦250': './assets/digital.png',
+};
+
+
 
 // POST — Register a successful user
 route.post('/register-success', async (req, res) => {
   try {
-    const { fullname, email, age_range, creative_Background, ticket_bought, hear_us, join_us } = req.body;
+    const {
+      fullname,
+      email,
+      age_range,
+      creative_Background,
+      ticket_bought,
+      hear_us,
+      join_us,
+    } = req.body;
 
     if (!fullname || !email) {
       return res.status(400).json({ message: 'Full name and email are required' });
@@ -22,16 +41,21 @@ route.post('/register-success', async (req, res) => {
       creative_Background,
       ticket_bought,
       hear_us,
-      join_us
+      join_us,
     });
 
     await user.save();
 
-    // ✉️ Send email confirmation
-await sendConfirmationEmail(email, fullname);
-await sendTicketEmail(email, fullname, './assets/spark.png');
+    // 🧠 Get ticket image based on selected ticket
+    const ticketImagePath = ticketImages[ticket_bought] || './assets/default.png';
+
+    // ✉️ Send emails
+    await sendConfirmationEmail(email, fullname);
+    await sendTicketEmail(email, fullname, ticketImagePath);
+
     res.status(201).json({ message: 'Registration saved & email sent', data: user });
   } catch (error) {
+    console.error('Email Error:', error);
     res.status(500).json({ message: 'Something went wrong', error });
   }
 });
