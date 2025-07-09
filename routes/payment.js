@@ -2,20 +2,17 @@ const express = require('express');
 const route = express.Router();
 require('dotenv').config();
 
-const Payment = require('../model/payment'); // Ensure this is correctly imported
+const path = require('path');
+const Payment = require('../model/payment');
 const { sendConfirmationEmail, sendTicketEmail } = require('../utils/nodemailer');
 
-const path = require('path');
-
-// Ticket image map
+// Ticket image path map (local file system)
 const ticketImages = {
-  '₦100': './assets/spark.png',
-  '₦150': './assets/vip.png',
-  '₦200': './assets/tech.png',
-  '₦250': './assets/digital.png',
+  '₦100': path.join(__dirname, '../ticket-assets/spark.png'),
+  '₦150': path.join(__dirname, '../ticket-assets/vip.png'),
+  '₦200': path.join(__dirname, '../ticket-assets/tech.png'),
+  '₦250': path.join(__dirname, '../ticket-assets/digital.png'),
 };
-
-
 
 // POST — Register a successful user
 route.post('/register-success', async (req, res) => {
@@ -46,22 +43,20 @@ route.post('/register-success', async (req, res) => {
 
     await user.save();
 
-    // 🧠 Get ticket image based on selected ticket
-    const ticketImagePath = ticketImages[ticket_bought] || './assets/default.png';
+    const ticketImagePath = ticketImages[ticket_bought] || path.join(__dirname, '../ticket-assets/default.png');
+    console.log('🧾 Resolved Ticket Path:', ticketImagePath);
 
-    // ✉️ Send emails
     await sendConfirmationEmail(email, fullname);
-    await sendTicketEmail(email, fullname, ticketImagePath);
+    await sendTicketEmail(email, fullname, ticketImagePath, ticket_bought);
 
     res.status(201).json({ message: 'Registration saved & email sent', data: user });
   } catch (error) {
-    console.error('Email Error:', error);
+    console.error('❌ Email Error:', error);
     res.status(500).json({ message: 'Something went wrong', error });
   }
 });
 
-
-// 2. GET — Retrieve all registered users
+// GET — All registered users
 route.get('/all-users', async (req, res) => {
   try {
     const users = await Payment.find();
@@ -71,7 +66,7 @@ route.get('/all-users', async (req, res) => {
   }
 });
 
-// 3. GET — Retrieve a specific user by email
+// GET — Specific user by email
 route.get('/user/:email', async (req, res) => {
   try {
     const user = await Payment.findOne({ email: req.params.email });
