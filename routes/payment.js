@@ -8,10 +8,10 @@ const { sendConfirmationEmail, sendTicketEmail } = require('../utils/nodemailer'
 
 // Ticket image path map (local file system)
 const ticketImages = {
-  '₦3,500': path.join(__dirname, '../ticket-assets/spark.png'),
-  '₦10,000': path.join(__dirname, '../ticket-assets/vip.png'),
-  '₦50,000': path.join(__dirname, '../ticket-assets/tech.png'),
-  '₦100,000': path.join(__dirname, '../ticket-assets/digital.png'),
+  '₦100': path.join(__dirname, '../ticket-assets/spark.png'),
+  '₦150': path.join(__dirname, '../ticket-assets/vip.png'),
+  '₦200': path.join(__dirname, '../ticket-assets/tech.png'),
+  '₦250': path.join(__dirname, '../ticket-assets/digital.png'),
 };
 
 // POST — Register a successful user
