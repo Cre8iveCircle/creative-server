@@ -4,24 +4,24 @@ const fs = require("fs");
 require("dotenv").config();
 
 const transport = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
+    service: "gmail",
+    auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
+    },
+    tls: {
+        rejectUnauthorized: false,
+    },
 });
 
 // 📧 Confirmation Email
-const sendConfirmationEmail = async (email, fullname) => {
-  try {
-    await transport.sendMail({
-      from: `"CRE8IVE SUMMIT" <${process.env.MAIL_USER}>`,
-      to: email,
-      subject: "YOU’RE ALL SET FOR CRE8IVE SUMMIT ONE.0",
-      html: `
+const sendConfirmationEmail = async(email, fullname) => {
+    try {
+        await transport.sendMail({
+            from: `"CRE8IVE SUMMIT" <${process.env.MAIL_USER}>`,
+            to: email,
+            subject: "YOU’RE ALL SET FOR CRE8IVE SUMMIT ONE.0",
+            html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
           <h2 style="color: #FFBB00;">Hi ${fullname},</h2>
           <p>We're excited to confirm your registration for the <strong>CRE8IVE SUMMIT ONE.0</strong>, happening on <strong>Saturday, 23rd August, 2025</strong>!</p>
@@ -31,41 +31,46 @@ const sendConfirmationEmail = async (email, fullname) => {
           <p><strong>CRE8IVE SUMMIT ONE.0<br/>Registration Team</strong></p>
         </div>
       `,
-    });
+        });
 
-    console.log("✅ Confirmation email sent to:", email);
-  } catch (error) {
-    console.error("❌ Error sending confirmation email:", error);
-  }
+        console.log("✅ Confirmation email sent to:", email);
+    } catch (error) {
+        console.error("❌ Error sending confirmation email:", error);
+    }
 };
 
 // 📧 Ticket Email
-const sendTicketEmail = async (email, fullname, ticketPath, ticket_bought) => {
-  try {
-    const ticketDownloadMap = {
-      '₦3,500': 'spark-D2vyWcoz',
-      '₦10,000': 'vip-Ds4yGf0g',
-      '₦50,000': 'tech-DjhnCWQl',
-      '₦100,000': 'digital-JhOC0aDL',
-    };
+const sendTicketEmail = async(email, fullname, ticketPath, ticket_bought) => {
+    try {
+        const ticketDownloadMap = {
+            '₦3,500': 'spark-D2vyWcoz',
+            '₦3,500 (Free)': 'spark-D2vyWcoz', // 👈 ADD THIS LINE
+            '₦10,000': 'vip-Ds4yGf0g',
+            '₦50,000': 'tech-DjhnCWQl',
+            '₦100,000': 'digital-JhOC0aDL',
+        };
 
-    console.log('🧾 Final ticketPath:', ticketPath);
-    const fileExists = fs.existsSync(ticketPath);
-    console.log('🧾 File Exists:', fileExists);
 
-    if (!fileExists) {
-      console.warn(`⚠️ Ticket image not found at: ${ticketPath}`);
-    }
+        console.log('🧾 Final ticketPath:', ticketPath);
+        const fileExists = fs.existsSync(ticketPath);
+        console.log('🧾 File Exists:', fileExists);
 
-    const fileName = path.basename(ticketPath);
-    const fileBase = ticketDownloadMap[ticket_bought] || 'default-ticket';
-    const downloadLink = `https://creative-circle-01.netlify.app/assets/${fileBase}.png`;
+        if (!fileExists) {
+            console.warn(`⚠️ Ticket image not found at: ${ticketPath}`);
+        }
 
-    await transport.sendMail({
-      from: `"CRE8IVE SUMMIT" <${process.env.MAIL_USER}>`,
-      to: email,
-      subject: "IMPORTANT INFORMATION | GET YOUR TICKET",
-      html: `
+        const fileName = path.basename(ticketPath);
+        const fileBase = ticketDownloadMap[ticket_bought] || 'spark-D2vyWcoz';
+        const downloadLink = `https://creative-circle-01.netlify.app/assets/${fileBase}.png`;
+
+        console.log(downloadLink);
+
+
+        await transport.sendMail({
+            from: `"CRE8IVE SUMMIT" <${process.env.MAIL_USER}>`,
+            to: email,
+            subject: "IMPORTANT INFORMATION | GET YOUR TICKET",
+            html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
           <h2 style="color: #FFBB00;">Hello ${fullname},</h2>
           <p>Thank you for registering for <strong>CRE8IVE SUMMIT ONE.0</strong>!</p>
@@ -91,22 +96,20 @@ const sendTicketEmail = async (email, fullname, ticketPath, ticket_bought) => {
           <p><strong>CRE8IVE SUMMIT ONE.0<br/>Registration Team</strong></p>
         </div>
       `,
-      attachments: fileExists
-        ? [{
-            filename: fileName,
-            path: ticketPath,
-            cid: 'eventTicket',
-          }]
-        : [],
-    });
+            attachments: fileExists ? [{
+                filename: fileName,
+                path: ticketPath,
+                cid: 'eventTicket',
+            }] : [],
+        });
 
-    console.log("✅ Ticket email sent to:", email);
-  } catch (error) {
-    console.error("❌ Error sending ticket email:", error);
-  }
+        console.log("✅ Ticket email sent to:", email);
+    } catch (error) {
+        console.error("❌ Error sending ticket email:", error);
+    }
 };
 
 module.exports = {
-  sendConfirmationEmail,
-  sendTicketEmail,
+    sendConfirmationEmail,
+    sendTicketEmail,
 };
