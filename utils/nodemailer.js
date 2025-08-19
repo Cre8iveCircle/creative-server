@@ -44,6 +44,7 @@ const sendTicketEmail = async(email, fullname, ticketPath, ticket_bought) => {
     try {
         const ticketDownloadMap = {
             '₦3,500': 'spark-D2vyWcoz',
+            '₦5,000': 'spark-D2vyWcoz',
             '₦3,500 (Free)': 'spark-D2vyWcoz', // 👈 ADD THIS LINE
             '₦10,000': 'vip-Ds4yGf0g',
             '₦50,000': 'tech-DjhnCWQl',

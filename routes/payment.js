@@ -9,6 +9,7 @@ const { sendConfirmationEmail, sendTicketEmail } = require('../utils/nodemailer'
 // Ticket image path map (local file system)
 const ticketImages = {
     '₦3,500': path.join(__dirname, '../ticket-assets/spark.png'),
+    '₦5,000': path.join(__dirname, '../ticket-assets/spark.png'),
     '₦3,500 (Free)': path.join(__dirname, '../ticket-assets/spark.png'), // 👈 ADD THIS LINE
     '₦10,000': path.join(__dirname, '../ticket-assets/vip.png'),
     '₦50,000': path.join(__dirname, '../ticket-assets/tech.png'),
