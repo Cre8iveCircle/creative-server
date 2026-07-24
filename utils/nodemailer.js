@@ -61,8 +61,8 @@ const sendTicketEmail = async(email, fullname, ticketPath, ticket_bought) => {
         }
 
         const fileName = path.basename(ticketPath);
-        const fileBase = ticketDownloadMap[ticket_bought] || 'spark-D2vyWcoz';
-        const downloadLink = `https://creative-circle-01.netlify.app/assets/${fileBase}.png`;
+        const fileBase = ticketDownloadMap[ticket_bought] || 'spark-C5SPjuZO';
+        const downloadLink = `https://cre8ivesummit.online/assets/${fileBase}.png`;
 
         console.log(downloadLink);
 
@@ -74,11 +74,11 @@ const sendTicketEmail = async(email, fullname, ticketPath, ticket_bought) => {
             html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
           <h2 style="color: #FFBB00;">Hello ${fullname},</h2>
-          <p>Thank you for registering for <strong>CRE8IVE SUMMIT ONE.0</strong>!</p>
+          <p>Thank you for registering for <strong>CRE8IVE SUMMIT TWO.0</strong>!</p>
           <p>Your ticket package: <strong>${ticket_bought}</strong></p>
 
           <ul>
-            <li><strong>REGISTRATION starts at 8:30 AM</strong> – please arrive early to secure your spot.</li>
+            <li><strong>REGISTRATION starts at 9:00 AM</strong> – please arrive early to secure your spot.</li>
             <li><strong>VENUE:</strong> Denco Cinema, Debow Junction, Ekpoma.</li>
             <li><strong>Dress smartly</strong> – look sharp, make a great impression!</li>
             <li><strong>Be ready to network</strong> – come prepared to meet new people and share ideas.</li>
