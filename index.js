@@ -22,6 +22,7 @@ mongoose.connect(process.env.MONGO_URI_LOCAL)
 // connect to server
 app.use(express.json())
 
+
 // give access to connect to our endpoint
 app.use(cors())
 
