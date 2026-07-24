@@ -28,6 +28,9 @@ app.use(cors())
 // gain access to my routes
 app.use('/api/payment', require('./routes/payment'));
 
+app.get("/", (req, res) => {
+    res.send("Hello World");
+});
 app.listen(port, (error) => {
     if (!error) {
         console.log('Server running on port ' + port);
