@@ -26,6 +26,8 @@ app.use(express.json())
 // give access to connect to our endpoint
 app.use(cors())
 
+
+
 // gain access to my routes
 app.use('/api/payment', require('./routes/payment'));
 

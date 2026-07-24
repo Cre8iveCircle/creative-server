@@ -65,8 +65,6 @@ const sendTicketEmail = async(email, fullname, ticketPath, ticket_bought) => {
         const downloadLink = `https://cre8ivesummit.online/assets/${fileBase}.png`;
 
         console.log(downloadLink);
-        
-
 
         await transport.sendMail({
             from: `"CRE8IVE SUMMIT" <${process.env.MAIL_USER}>`,
