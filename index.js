@@ -14,6 +14,14 @@ const app = express()
 const cors = require('cors')
 require('dotenv').config();
 
+const dns = require("dns");
+const dnsPromises = require("node:dns/promises");
+
+
+dnsPromises.setServers(["1.1.1.1", "8.8.8.8"]);
+dns.setDefaultResultOrder("ipv4first");
+
+
 // mongoose dv sever
 mongoose.connect(process.env.MONGO_URI_LOCAL)
     .then(() => console.log('MongoDB connected'))
@@ -21,12 +29,18 @@ mongoose.connect(process.env.MONGO_URI_LOCAL)
 // connect to server
 app.use(express.json())
 
+
 // give access to connect to our endpoint
 app.use(cors())
+
+
 
 // gain access to my routes
 app.use('/api/payment', require('./routes/payment'));
 
+app.get("/", (req, res) => {
+    res.send("Hello World");
+});
 app.listen(port, (error) => {
     if (!error) {
         console.log('Server running on port ' + port);
