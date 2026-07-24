@@ -7,6 +7,14 @@ const app = express()
 const cors = require('cors')
 require('dotenv').config();
 
+const dns = require("dns");
+const dnsPromises = require("node:dns/promises");
+
+
+dnsPromises.setServers(["1.1.1.1", "8.8.8.8"]);
+dns.setDefaultResultOrder("ipv4first");
+
+
 // mongoose dv sever
 mongoose.connect(process.env.MONGO_URI_LOCAL)
     .then(() => console.log('MongoDB connected'))
