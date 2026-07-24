@@ -3,6 +3,13 @@ const express = require('express')
 const mongoose = require('mongoose')
 const port = 5000
 
+const dns = require("dns");
+const dnsPromises = require("node:dns/promises");
+
+
+dnsPromises.setServers(["1.1.1.1", "8.8.8.8"]);
+dns.setDefaultResultOrder("ipv4first");
+
 const app = express()
 const cors = require('cors')
 require('dotenv').config();
@@ -23,8 +30,7 @@ app.use('/api/payment', require('./routes/payment'));
 app.listen(port, (error) => {
     if (!error) {
         console.log('Server running on port ' + port);
-    }
-    else {
+    } else {
         console.log('Error' + error);
     }
 })
