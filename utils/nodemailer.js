@@ -14,98 +14,155 @@ const transport = nodemailer.createTransport({
     },
 });
 
+// ✅ Change this whenever your domain changes
+const TICKET_BASE_URL = "https://cre8ivesummit.online/assets";
+
+
 // 📧 Confirmation Email
-const sendConfirmationEmail = async(email, fullname) => {
+const sendConfirmationEmail = async (email, fullname) => {
     try {
         await transport.sendMail({
             from: `"CRE8IVE SUMMIT" <${process.env.MAIL_USER}>`,
             to: email,
-            subject: "YOU’RE ALL SET FOR CRE8IVE SUMMIT TWP.0",
+            subject: "YOU’RE ALL SET FOR CRE8IVE SUMMIT TWO.0",
             html: `
-        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-          <h2 style="color: #FFBB00;">Hi ${fullname},</h2>
-          <p>We're excited to confirm your registration for the <strong>CRE8IVE SUMMIT TWO.0</strong>, happening on <strong>Saturday, 22nd August, 2026</strong>!</p>
-          <p>Get ready for an inspiring experience filled with thought-provoking talks and impactful networking.</p>
-          <br/>
-          <p>Best regards,</p>
-          <p><strong>CRE8IVE SUMMIT TWO.0<br/>Registration Team</strong></p>
-        </div>
-      `,
+                <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                    <h2 style="color:#FFBB00;">Hi ${fullname},</h2>
+
+                    <p>
+                        We're excited to confirm your registration for the
+                        <strong>CRE8IVE SUMMIT TWO.0</strong>, happening on
+                        <strong>Saturday, 22nd August, 2026</strong>.
+                    </p>
+
+                    <p>
+                        Get ready for an inspiring experience filled with
+                        thought-provoking talks and impactful networking.
+                    </p>
+
+                    <br/>
+
+                    <p>Best regards,</p>
+
+                    <strong>
+                        CRE8IVE SUMMIT TWO.0<br/>
+                        Registration Team
+                    </strong>
+                </div>
+            `,
         });
 
-        console.log("✅ Confirmation email sent to:", email);
+        console.log("✅ Confirmation email sent:", email);
     } catch (error) {
-        console.error("❌ Error sending confirmation email:", error);
+        console.error("❌ Confirmation email failed:", error);
+        throw error;
     }
 };
 
+
 // 📧 Ticket Email
-const sendTicketEmail = async(email, fullname, ticketPath, ticket_bought) => {
+const sendTicketEmail = async (
+    email,
+    fullname,
+    ticketPath,
+    ticket_bought
+) => {
     try {
         const ticketDownloadMap = {
-            '₦3,500': 'spark-C5SPjuZO',
-            '₦5,000': 'spark-C5SPjuZO',
-            '₦3,500 (Free)': 'spark-C5SPjuZO', // 👈 ADD THIS LINE
-            '₦10,000': 'vip-BqOmvrC_',
-            '₦50,000': 'tech-XVU9QiQj',
-            '₦100,000': 'digital-2CrJbkjy',
+            "₦3,500": "spark-C5SPjuZO",
+            "₦5,000": "spark-C5SPjuZO",
+            "₦3,500 (Free)": "spark-C5SPjuZO",
+            "₦10,000": "vip-BqOmvrC_",
+            "₦50,000": "tech-XVU9QiQj",
+            "₦100,000": "digital-2CrJbkjy",
         };
 
+        console.log("🧾 Ticket Path:", ticketPath);
 
-        console.log('🧾 Final ticketPath:', ticketPath);
         const fileExists = fs.existsSync(ticketPath);
-        console.log('🧾 File Exists:', fileExists);
+
+        console.log("📁 Ticket Exists:", fileExists);
 
         if (!fileExists) {
-            console.warn(`⚠️ Ticket image not found at: ${ticketPath}`);
+            console.warn(`⚠️ Ticket image missing: ${ticketPath}`);
         }
 
         const fileName = path.basename(ticketPath);
-        const fileBase = ticketDownloadMap[ticket_bought] || 'spark-C5SPjuZO';
-        const downloadLink = `https://cre8ivesummit.online/assets/${fileBase}.png`;
 
-        console.log(downloadLink);
+        const assetName =
+            ticketDownloadMap[ticket_bought] || "spark-C5SPjuZO";
+
+        const downloadLink = `${TICKET_BASE_URL}/${assetName}.png`;
+
+        console.log("🔗 Download URL:", downloadLink);
 
         await transport.sendMail({
             from: `"CRE8IVE SUMMIT" <${process.env.MAIL_USER}>`,
             to: email,
             subject: "IMPORTANT INFORMATION | GET YOUR TICKET",
+
             html: `
-        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-          <h2 style="color: #FFBB00;">Hello ${fullname},</h2>
-          <p>Thank you for registering for <strong>CRE8IVE SUMMIT TWO.0</strong>!</p>
-          <p>Your ticket package: <strong>${ticket_bought}</strong></p>
+                <div style="font-family: Arial, sans-serif; line-height:1.6;">
+                    <h2 style="color:#FFBB00;">Hello ${fullname},</h2>
 
-          <ul>
-            <li><strong>REGISTRATION starts at 9:00 AM</strong> – please arrive early to secure your spot.</li>
-            <li><strong>VENUE:</strong> Denco Cinema, Debow Junction, Ekpoma.</li>
-            <li><strong>Dress smartly</strong> – look sharp, make a great impression!</li>
-            <li><strong>Be ready to network</strong> – come prepared to meet new people and share ideas.</li>
-            <li><strong>Maximize the experience</strong> – engage actively, ask questions, and soak in the knowledge.</li>
-          </ul>
+                    <p>
+                        Thank you for registering for
+                        <strong>CRE8IVE SUMMIT TWO.0</strong>.
+                    </p>
 
-          <p style="color: red; font-weight: bold;">
-            NOTE: PRESENT THIS TICKET AT THE REGISTRATION STAND – IT IS REQUIRED FOR ENTRY.
-          </p>
+                    <p>
+                        <strong>Your Ticket:</strong> ${ticket_bought}
+                    </p>
 
-          <img src="cid:eventTicket" style="max-width: 100%; margin: 12px 0; border-radius: 8px;" alt="Ticket" />
-          <p>📥 <a href="${downloadLink}" download>Click here to download your ticket</a></p>
+                    <ul>
+                        <li><strong>Registration:</strong> 9:00 AM</li>
+                        <li><strong>Venue:</strong> Denco Cinema, Debow Junction, Ekpoma.</li>
+                        <li>Dress smartly.</li>
+                        <li>Come ready to network.</li>
+                        <li>Participate and enjoy the experience.</li>
+                    </ul>
 
-          <p>We look forward to welcoming you to an unforgettable event!</p>
-          <br/>
-          <p><strong>CRE8IVE SUMMIT ONE.0<br/>Registration Team</strong></p>
-        </div>
-      `,
-            attachments: fileExists ? [{
-                filename: fileName,
-                path: ticketPath,
-                cid: 'eventTicket',
-            }] : [],
+                    <p style="color:red;font-weight:bold;">
+                        PRESENT THIS TICKET AT THE REGISTRATION DESK.
+                    </p>
+
+                    ${
+                        fileExists
+                            ? `<img src="cid:eventTicket" style="max-width:100%;border-radius:8px;" />`
+                            : ""
+                    }
+
+                    <p>
+                        📥
+                        <a href="${downloadLink}">
+                            Download Your Ticket
+                        </a>
+                    </p>
+
+                    <br/>
+
+                    <strong>
+                        CRE8IVE SUMMIT TWO.0<br/>
+                        Registration Team
+                    </strong>
+                </div>
+            `,
+
+            attachments: fileExists
+                ? [
+                      {
+                          filename: fileName,
+                          path: ticketPath,
+                          cid: "eventTicket",
+                      },
+                  ]
+                : [],
         });
 
-        console.log("✅ Ticket email sent to:", email);
+        console.log("✅ Ticket email sent:", email);
     } catch (error) {
-        console.error("❌ Error sending ticket email:", error);
+        console.error("❌ Ticket email failed:", error);
+        throw error;
     }
 };
 

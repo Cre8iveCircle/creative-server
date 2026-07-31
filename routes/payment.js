@@ -18,7 +18,11 @@ const ticketImages = {
 
 
 // POST — Register a successful user
-route.post('/register-success', async(req, res) => {
+route.post("/register-success", async (req, res) => {
+    console.log("\n==================== NEW REGISTRATION ====================");
+    console.log("📥 Incoming Request Body:");
+    console.log(req.body);
+
     try {
         const {
             fullname,
@@ -30,11 +34,18 @@ route.post('/register-success', async(req, res) => {
             join_us,
         } = req.body;
 
-        console.log(ticket_bought);
+        console.log("👤 Fullname:", fullname);
+        console.log("📧 Email:", email);
+        console.log("🎫 Ticket Bought:", ticket_bought);
 
         if (!fullname || !email) {
-            return res.status(400).json({ message: 'Full name and email are required' });
+            console.log("❌ Validation failed: fullname or email missing");
+            return res.status(400).json({
+                message: "Full name and email are required",
+            });
         }
+
+        console.log("📝 Creating Payment document...");
 
         const user = new Payment({
             fullname,
@@ -46,18 +57,55 @@ route.post('/register-success', async(req, res) => {
             join_us,
         });
 
+        console.log("💾 Saving user to MongoDB...");
         await user.save();
+        console.log("✅ User saved successfully!");
 
-        const ticketImagePath = ticketImages[ticket_bought] || path.join(__dirname, '../ticket-assets/default.png');
-        console.log('🧾 Resolved Ticket Path:', ticketImagePath);
+        const ticketImagePath =
+            ticketImages[ticket_bought] ||
+            path.join(__dirname, "../ticket-assets/default.png");
 
+        console.log("🧾 Ticket Path:", ticketImagePath);
+
+        console.log("📧 Sending confirmation email...");
         await sendConfirmationEmail(email, fullname);
-        await sendTicketEmail(email, fullname, ticketImagePath, ticket_bought);
+        console.log("✅ Confirmation email sent");
 
-        res.status(201).json({ message: 'Registration saved & email sent', data: user });
+        console.log("🎟 Sending ticket email...");
+        await sendTicketEmail(
+            email,
+            fullname,
+            ticketImagePath,
+            ticket_bought
+        );
+        console.log("✅ Ticket email sent");
+
+        console.log("🎉 Registration completed successfully!");
+        console.log("=========================================================\n");
+
+        return res.status(201).json({
+            message: "Registration saved & email sent",
+            data: user,
+        });
     } catch (error) {
-        console.error('❌ Email Error:', error);
-        res.status(500).json({ message: 'Something went wrong', error });
+        console.log("\n==================== REGISTRATION ERROR ====================");
+
+        console.error("❌ Error Name:", error.name);
+        console.error("❌ Error Message:", error.message);
+        console.error("❌ Error Stack:");
+        console.error(error.stack);
+
+        if (error.response) {
+            console.error("❌ Response:", error.response);
+        }
+
+        console.log("===========================================================\n");
+
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong",
+            error: error.message,
+        });
     }
 });
 
