@@ -14,7 +14,6 @@ const app = express()
 const cors = require('cors')
 require('dotenv').config();
 
-const dns = require("dns");
 const dnsPromises = require("node:dns/promises");
 
 
