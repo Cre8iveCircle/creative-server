@@ -15,7 +15,10 @@ const transport = nodemailer.createTransport({
     greetingTimeout: 30000,
     socketTimeout: 30000,
 });
-
+console.log({
+    MAIL_USER: process.env.MAIL_USER,
+    MAIL_PASS: process.env.MAIL_PASS ? "Loaded" : "Missing",
+});
 // ✅ Change this whenever your domain changes
 const TICKET_BASE_URL = "https://cre8ivesummit.online/assets";
 
