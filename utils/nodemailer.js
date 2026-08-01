@@ -4,14 +4,16 @@ const fs = require("fs");
 require("dotenv").config();
 
 const transport = nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
     auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
     },
-    tls: {
-        rejectUnauthorized: false,
-    },
+    connectionTimeout: 30000,
+    greetingTimeout: 30000,
+    socketTimeout: 30000,
 });
 
 // ✅ Change this whenever your domain changes
