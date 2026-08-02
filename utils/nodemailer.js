@@ -8,11 +8,17 @@ const transport = nodemailer.createTransport({
     port: 587,
     secure: false,
     requireTLS: true,
+    connectionTimeout: 30000,
+    greetingTimeout: 30000,
+    socketTimeout: 30000,
     auth: {
         user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS
-    }
+        pass: process.env.MAIL_PASS,
+    },
 });
+
+await transport.verify();
+console.log("SMTP Connected");
 console.log({
     MAIL_USER: process.env.MAIL_USER,
     MAIL_PASS: process.env.MAIL_PASS ? "Loaded" : "Missing",
