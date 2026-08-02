@@ -1,28 +1,11 @@
-const express = require('express');
+const express = require("express");
 const route = express.Router();
-require('dotenv').config();
+require("dotenv").config();
 
-const path = require('path');
-const Payment = require('../model/payment');
-const { sendConfirmationEmail, sendTicketEmail } = require('../utils/nodemailer');
-
-// Ticket image path map (local file system)
-const ticketImages = {
-    '₦3,500': path.join(__dirname, '../ticket-assets/spark.png'),
-    '₦5,000': path.join(__dirname, '../ticket-assets/spark.png'),
-    '₦3,500 (Free)': path.join(__dirname, '../ticket-assets/spark.png'), // 👈 ADD THIS LINE
-    '₦10,000': path.join(__dirname, '../ticket-assets/vip.png'),
-    '₦50,000': path.join(__dirname, '../ticket-assets/tech.png'),
-    '₦100,000': path.join(__dirname, '../ticket-assets/digital.png'),
-};
-
+const Payment = require("../model/payment");
 
 // POST — Register a successful user
 route.post("/register-success", async (req, res) => {
-    console.log("\n==================== NEW REGISTRATION ====================");
-    console.log("📥 Incoming Request Body:");
-    console.log(req.body);
-
     try {
         const {
             fullname,
@@ -34,20 +17,14 @@ route.post("/register-success", async (req, res) => {
             join_us,
         } = req.body;
 
-        console.log("👤 Fullname:", fullname);
-        console.log("📧 Email:", email);
-        console.log("🎫 Ticket Bought:", ticket_bought);
-
         if (!fullname || !email) {
-            console.log("❌ Validation failed: fullname or email missing");
             return res.status(400).json({
-                message: "Full name and email are required",
+                success: false,
+                message: "Full name and email are required.",
             });
         }
 
-        console.log("📝 Creating Payment document...");
-
-        const user = new Payment({
+        const user = await Payment.create({
             fullname,
             email,
             age_range,
@@ -57,79 +34,62 @@ route.post("/register-success", async (req, res) => {
             join_us,
         });
 
-        console.log("💾 Saving user to MongoDB...");
-        await user.save();
-        console.log("✅ User saved successfully!");
-
-        const ticketImagePath =
-            ticketImages[ticket_bought] ||
-            path.join(__dirname, "../ticket-assets/default.png");
-
-        console.log("🧾 Ticket Path:", ticketImagePath);
-
-        console.log("📧 Sending confirmation email...");
-        await sendConfirmationEmail(email, fullname);
-        console.log("✅ Confirmation email sent");
-
-        console.log("🎟 Sending ticket email...");
-        await sendTicketEmail(
-            email,
-            fullname,
-            ticketImagePath,
-            ticket_bought
-        );
-        console.log("✅ Ticket email sent");
-
-        console.log("🎉 Registration completed successfully!");
-        console.log("=========================================================\n");
-
         return res.status(201).json({
-            message: "Registration saved & email sent",
+            success: true,
+            message: "Registration completed successfully.",
             data: user,
         });
     } catch (error) {
-        console.log("\n==================== REGISTRATION ERROR ====================");
-
-        console.error("❌ Error Name:", error.name);
-        console.error("❌ Error Message:", error.message);
-        console.error("❌ Error Stack:");
-        console.error(error.stack);
-
-        if (error.response) {
-            console.error("❌ Response:", error.response);
-        }
-
-        console.log("===========================================================\n");
+        console.error("Registration Error:", error);
 
         return res.status(500).json({
             success: false,
-            message: "Something went wrong",
-            error: error.message,
+            message: "Something went wrong. Please try again later.",
         });
     }
 });
 
-//hu
-
 // GET — All registered users
-route.get('/all-users', async(req, res) => {
+route.get("/all-users", async (req, res) => {
     try {
         const users = await Payment.find();
-        res.status(200).json({ count: users.length, data: users });
+
+        return res.status(200).json({
+            success: true,
+            count: users.length,
+            data: users,
+        });
     } catch (error) {
-        res.status(500).json({ message: 'Could not fetch users', error });
+        return res.status(500).json({
+            success: false,
+            message: "Could not fetch users.",
+        });
     }
 });
 
 // GET — Specific user by email
-route.get('/user/:email', async(req, res) => {
+route.get("/user/:email", async (req, res) => {
     try {
-        const user = await Payment.findOne({ email: req.params.email });
-        if (!user) return res.status(404).json({ message: 'User not found' });
+        const user = await Payment.findOne({
+            email: req.params.email,
+        });
 
-        res.status(200).json({ data: user });
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found.",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: user,
+        });
     } catch (error) {
-        res.status(500).json({ message: 'Error retrieving user', error });
+        return res.status(500).json({
+            success: false,
+            message: "Error retrieving user.",
+        });
     }
 });
 
