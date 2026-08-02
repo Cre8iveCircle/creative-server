@@ -40,11 +40,10 @@ const transport = nodemailer.createTransport({
 async function verifySMTP() {
     console.log("🚀 Starting SMTP verification...");
     console.log("⏰ Time:", new Date().toISOString());
-
+    const start = Date.now();
     try {
         console.log("📡 Attempting connection to smtp.gmail.com:587...");
 
-        const start = Date.now();
 
         await transport.verify();
 
