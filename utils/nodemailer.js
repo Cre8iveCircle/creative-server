@@ -8,9 +8,8 @@ const transport = nodemailer.createTransport({
     port: 587,
     secure: false,
     requireTLS: true,
-    connectionTimeout: 30000,
-    greetingTimeout: 30000,
-    socketTimeout: 30000,
+    logger: true,
+    debug: true,
     auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
@@ -33,7 +32,7 @@ verifySMTP();
 
 console.log({
     MAIL_USER: process.env.MAIL_USER,
-    MAIL_PASS: process.env.MAIL_PASS ? "Loaded" : "Missing",
+    MAIL_PASS: process.env.MAIL_PASS,
 });
 // ✅ Change this whenever your domain changes
 const TICKET_BASE_URL = "https://cre8ivesummit.online/assets";
