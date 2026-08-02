@@ -17,8 +17,20 @@ const transport = nodemailer.createTransport({
     },
 });
 
-await transport.verify();
-console.log("SMTP Connected");
+async function verifySMTP() {
+    try {
+        await transport.verify();
+        console.log("✅ SMTP Connected");
+    } catch (err) {
+        console.error("❌ SMTP Verify Failed:", err);
+    }
+}
+
+verifySMTP();
+
+// await transport.verify();
+// console.log("SMTP Connected");
+
 console.log({
     MAIL_USER: process.env.MAIL_USER,
     MAIL_PASS: process.env.MAIL_PASS ? "Loaded" : "Missing",
