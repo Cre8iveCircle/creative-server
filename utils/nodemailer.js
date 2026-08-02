@@ -3,10 +3,7 @@ const path = require("path");
 const fs = require("fs");
 require("dotenv").config();
 
-const nodemailer = require("nodemailer");
-const path = require("path");
-const fs = require("fs");
-require("dotenv").config();
+
 
 console.log("========================================");
 console.log("📧 SMTP CONFIGURATION");
