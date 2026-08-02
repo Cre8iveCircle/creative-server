@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 require("dotenv").config();
 
-const transporter = nodemailer.createTransport({
+const transport = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
     secure: false,
@@ -13,8 +13,6 @@ const transporter = nodemailer.createTransport({
         pass: process.env.MAIL_PASS
     }
 });
-
-
 console.log({
     MAIL_USER: process.env.MAIL_USER,
     MAIL_PASS: process.env.MAIL_PASS ? "Loaded" : "Missing",
