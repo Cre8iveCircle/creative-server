@@ -3,6 +3,27 @@ const path = require("path");
 const fs = require("fs");
 require("dotenv").config();
 
+const nodemailer = require("nodemailer");
+const path = require("path");
+const fs = require("fs");
+require("dotenv").config();
+
+console.log("========================================");
+console.log("📧 SMTP CONFIGURATION");
+console.log("========================================");
+console.log("MAIL_USER:", process.env.MAIL_USER);
+console.log(
+    "MAIL_PASS:",
+    process.env.MAIL_PASS
+        ? process.env.MAIL_PASS.substring(0, 4) + "********"
+        : "MISSING"
+);
+
+console.log("Host:", "smtp.gmail.com");
+console.log("Port:", 587);
+console.log("Secure:", false);
+console.log("========================================");
+
 const transport = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
@@ -10,6 +31,9 @@ const transport = nodemailer.createTransport({
     requireTLS: true,
     logger: true,
     debug: true,
+    connectionTimeout: 30000,
+    greetingTimeout: 30000,
+    socketTimeout: 30000,
     auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
@@ -17,11 +41,35 @@ const transport = nodemailer.createTransport({
 });
 
 async function verifySMTP() {
+    console.log("🚀 Starting SMTP verification...");
+    console.log("⏰ Time:", new Date().toISOString());
+
     try {
+        console.log("📡 Attempting connection to smtp.gmail.com:587...");
+
+        const start = Date.now();
+
         await transport.verify();
+
+        const end = Date.now();
+
         console.log("✅ SMTP Connected");
+        console.log(`⚡ Connected in ${end - start}ms`);
     } catch (err) {
-        console.error("❌ SMTP Verify Failed:", err);
+        const end = Date.now();
+
+        console.log("========================================");
+        console.log("❌ SMTP VERIFY FAILED");
+        console.log("========================================");
+        console.log("Time:", new Date().toISOString());
+        console.log("Duration:", end - start, "ms");
+        console.log("Name:", err.name);
+        console.log("Code:", err.code);
+        console.log("Command:", err.command);
+        console.log("Message:", err.message);
+        console.log("Stack:");
+        console.log(err.stack);
+        console.log("========================================");
     }
 }
 
@@ -40,6 +88,13 @@ const TICKET_BASE_URL = "https://cre8ivesummit.online/assets";
 
 // 📧 Confirmation Email
 const sendConfirmationEmail = async (email, fullname) => {
+
+    console.log("========================================");
+    console.log("📨 SENDING CONFIRMATION EMAIL");
+    console.log("To:", email);
+    console.log("From:", process.env.MAIL_USER);
+    console.log("Time:", new Date().toISOString());
+    console.log("========================================");
     try {
         await transport.sendMail({
             from: `"CRE8IVE SUMMIT" <${process.env.MAIL_USER}>`,
@@ -72,6 +127,8 @@ const sendConfirmationEmail = async (email, fullname) => {
             `,
         });
 
+        console.log("✅ Confirmation email sent");
+        console.log("Duration:", Date.now() - start, "ms");
         console.log("✅ Confirmation email sent:", email);
     } catch (error) {
         console.error("❌ Confirmation email failed:", error);
@@ -146,11 +203,10 @@ const sendTicketEmail = async (
                         PRESENT THIS TICKET AT THE REGISTRATION DESK.
                     </p>
 
-                    ${
-                        fileExists
-                            ? `<img src="cid:eventTicket" style="max-width:100%;border-radius:8px;" />`
-                            : ""
-                    }
+                    ${fileExists
+                    ? `<img src="cid:eventTicket" style="max-width:100%;border-radius:8px;" />`
+                    : ""
+                }
 
                     <p>
                         📥
@@ -170,12 +226,12 @@ const sendTicketEmail = async (
 
             attachments: fileExists
                 ? [
-                      {
-                          filename: fileName,
-                          path: ticketPath,
-                          cid: "eventTicket",
-                      },
-                  ]
+                    {
+                        filename: fileName,
+                        path: ticketPath,
+                        cid: "eventTicket",
+                    },
+                ]
                 : [],
         });
 
