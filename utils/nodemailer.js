@@ -3,18 +3,18 @@ const path = require("path");
 const fs = require("fs");
 require("dotenv").config();
 
-const transport = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
+    port: 587,
+    secure: false,
+    requireTLS: true,
     auth: {
         user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-    },
-    connectionTimeout: 30000,
-    greetingTimeout: 30000,
-    socketTimeout: 30000,
+        pass: process.env.MAIL_PASS
+    }
 });
+
+
 console.log({
     MAIL_USER: process.env.MAIL_USER,
     MAIL_PASS: process.env.MAIL_PASS ? "Loaded" : "Missing",
