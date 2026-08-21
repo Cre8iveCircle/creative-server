@@ -24,20 +24,20 @@ route.post("/register-success", async (req, res) => {
             });
         }
 
-        const user = await Payment.create({
-            fullname,
-            email,
-            age_range,
-            creative_Background,
-            ticket_bought,
-            hear_us,
-            join_us,
-        });
+        // const user = await Payment.create({
+        //     fullname,
+        //     email,
+        //     age_range,
+        //     creative_Background,
+        //     ticket_bought,
+        //     hear_us,
+        //     join_us,
+        // });
 
-        return res.status(201).json({
-            success: true,
-            message: "Registration completed successfully.",
-            data: user,
+        return res.status(400).json({
+            success: false,
+            message: "Ticket Registration Closed",
+            // data: user,
         });
     } catch (error) {
         console.error("Registration Error:", error);
